@@ -77,6 +77,9 @@ func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
 	}
 
 	if search(message.Content, "!user") {
+		if len(message.Mentions) == 0 {
+			return
+		}
 		var user *discordgo.User = message.Mentions[0]
 
 		userStats(session, message, user)
