@@ -12,11 +12,31 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var debugMode bool = false
+
+func debugMessage(text string) {
+	if debugMode {
+		fmt.Println(text)
+	}
+}
+
 func main() {
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "--help", "-h":
+			fmt.Println(" Modos de inicialização:")
+			fmt.Println("    -v  --view\t\tExibe todas as mensagens enviadas ao server")
+			return
+
+		case "--view", "-v":
+			debugMode = true
+		}
+	}
+
 	var TokenAPI, _ = ioutil.ReadFile("./token")
 	var app, err = discordgo.New("Bot " + string(TokenAPI))
 	if err != nil {
-		fmt.Print("Erro ao criar a seção: ")
+		fmt.Println("Erro ao criar a seção:")
 		fmt.Println(err)
 		return
 	}
@@ -25,52 +45,88 @@ func main() {
 
 	err = app.Open()
 	if err != nil {
-		fmt.Print("Erro ao abrir conexão: ")
+		fmt.Println("Erro ao abrir conexão: ")
 		fmt.Println(err)
 		return
 	}
 
-	// <<< DAQUI ATÉ A LINHA 37 EU NÃO SEI O QUE ESTÁ ACONTECENDO >>>
-	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
+	waitAMinute()
 
 	app.Close()
 }
 
-func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
+func waitAMinute() {
+	debugMessage("Bot is now running.  Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
+	<-sc
+}
 
-	logMessagesToConsole(message) // Mostra todas as mensagens no temrinal
+func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
+	logMessagesToConsole(session, message) // Mostra todas as mensagens no temrinal
 	if message.Author.ID == session.State.User.ID {
 		return // Ignora mensagens do próprio bot
 	}
 
-	if strings.Index(strings.ToLower(message.Content), "hello") > -1 {
+	if search(message.Content, "hello") {
 		session.ChannelMessageSend(message.ChannelID, "world")
 	}
 
-	if strings.Index(strings.ToLower(message.Content), "ping") > -1 {
+	if search(message.Content, "ping") {
 		session.ChannelMessageSend(message.ChannelID, "Pong!")
+	}
+
+	if search(message.Content, "!user") {
+		var user *discordgo.User = message.Mentions[0]
+
+		userStats(session, message, user)
+		session.ChannelMessageDelete(message.ChannelID, message.ID)
 	}
 }
 
-func logMessagesToConsole(message *discordgo.MessageCreate) {
-	var Time = fmt.Sprintf(`%d/%d/%d %d:%d:%d`,
-		time.Now().Day(),
-		time.Now().Month(),
-		time.Now().Year(),
-		time.Now().Hour(),
-		time.Now().Minute(),
-		time.Now().Day(),
-	)
+func search(content, comparator string) bool {
+	var final bool
+	if strings.Index(strings.ToLower(content), comparator) > -1 {
+		final = true
+	}
 
-	var text = fmt.Sprintf(`%s | "%s#%s": %s`, // Eu não sei como pegar o nome do canal de texto
-		Time,
+	return final
+}
+
+func logMessagesToConsole(session *discordgo.Session, message *discordgo.MessageCreate) {
+	var channelOptions, _ = session.Channel(message.ChannelID)
+
+	// UTF Date | Channel Name | "User#0000": "Message content"
+	var log = fmt.Sprintf(`%s | #%s | "%s#%s": "%s"`,
+		message.Timestamp,
+		channelOptions.Name,
 		message.Author.Username,
 		message.Author.Discriminator,
 		message.Content,
 	)
 
-	fmt.Println(text)
+	debugMessage(log)
+}
+
+func userStats(session *discordgo.Session, message *discordgo.MessageCreate, user *discordgo.User) {
+	var messageEmbed = discordgo.MessageEmbed{
+		Author: &discordgo.MessageEmbedAuthor{
+			Name: fmt.Sprintf("%s#%s", user.Username, user.Discriminator),
+			URL:  user.AvatarURL("1024"),
+		},
+		Description: fmt.Sprintf("ID: %s\nBot: %t\nVerified: %t",
+			user.ID,
+			user.Bot,
+			user.Verified,
+		),
+		Timestamp: time.Now().Format(time.RFC3339),
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: fmt.Sprintf("Requested by %s#%s", message.Author.Username, message.Author.Discriminator),
+		},
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: user.AvatarURL("1024"),
+		},
+	}
+
+	session.ChannelMessageSendEmbed(message.ChannelID, &messageEmbed)
 }
