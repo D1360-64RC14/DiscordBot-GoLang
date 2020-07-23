@@ -1,0 +1,26 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Go Compile Check
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+    paths: 'main.go'
+  pull_request:
+    branches: [ master ]
+    paths: 'main.go'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.14.6'
+    - name: Compile main.go
+      run: go build main.go
