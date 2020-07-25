@@ -33,20 +33,26 @@ func main() {
 		}
 	}
 
-	var TokenAPI, _ = ioutil.ReadFile("./token")
-	var app, err = discordgo.New("Bot " + string(TokenAPI))
-	if err != nil {
+	var TokenAPI, TokenAPIERR = ioutil.ReadFile("./token")
+	if TokenAPIERR != nil {
+		fmt.Println("Erro ao ler arquivo 'token':")
+		fmt.Println(TokenAPIERR)
+		return
+	}
+	var token = strings.Split(string(TokenAPI), "\n")[0]
+	var app, appERR = discordgo.New("Bot " + token)
+	if appERR != nil {
 		fmt.Println("Erro ao criar a seção:")
-		fmt.Println(err)
+		fmt.Println(appERR)
 		return
 	}
 
 	app.AddHandler(onMessages)
 
-	err = app.Open()
-	if err != nil {
+	var appOpenERR = app.Open()
+	if appOpenERR != nil {
 		fmt.Println("Erro ao abrir conexão: ")
-		fmt.Println(err)
+		fmt.Println(appOpenERR)
 		return
 	}
 
