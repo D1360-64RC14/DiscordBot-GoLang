@@ -83,10 +83,12 @@ func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
 	}
 
 	if search(message.Content, "!user") {
+		var user *discordgo.User
 		if len(message.Mentions) == 0 {
-			return
+			user = message.Author
+		} else {
+			user = message.Mentions[0]
 		}
-		var user *discordgo.User = message.Mentions[0]
 
 		userStats(session, message, user)
 		session.ChannelMessageDelete(message.ChannelID, message.ID)
