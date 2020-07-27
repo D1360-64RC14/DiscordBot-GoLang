@@ -15,11 +15,11 @@ func main() {
 		switch os.Args[1] {
 		case "--help", "-h":
 			fmt.Println(" Modos de inicialização:")
-			fmt.Println("    -v  --view\t\tExibe todas as mensagens enviadas ao server")
+			fmt.Println("    -v  --verbose\t\tExibe todas as mensagens enviadas ao server")
 			return
 
-		case "--view", "-v":
-			debugMode = true
+		case "--verbose", "-v":
+			verboseMode = true
 		}
 	}
 
