@@ -17,7 +17,7 @@ func discordUTCtime() string {
 }
 
 func waitAMinute() {
-	debugMessage("Bot is now running.  Press CTRL-C to exit.")
+	consoleMessage("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
 	<-sc
@@ -35,14 +35,14 @@ func logMessagesToConsole(session *discordgo.Session, message *discordgo.Message
 		message.Content,
 	)
 
-	debugMessage(log)
+	consoleMessage(log)
 }
 
 // debugMode habilitado com argumento -v
-var debugMode bool = false
+var verboseMode bool = false
 
-func debugMessage(text string) {
-	if debugMode {
+func consoleMessage(text string) {
+	if verboseMode {
 		fmt.Println(text)
 	}
 }
