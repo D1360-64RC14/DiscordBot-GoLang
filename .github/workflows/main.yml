@@ -7,10 +7,8 @@ name: Go Compile Check
 on:
   push:
     branches: [ master ]
-    paths: 'main.go'
   pull_request:
     branches: [ master ]
-    paths: 'main.go'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,7 +20,7 @@ jobs:
     - uses: actions/setup-go@v2
       with:
         go-version: '1.14.6'
-    - name: Compile main.go
+    - name: Compile program
       run: |
         go get github.com/bwmarrin/discordgo
-        go build main.go
+        make build
