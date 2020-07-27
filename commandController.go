@@ -8,7 +8,8 @@ import (
 )
 
 func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
-	// Mostra todas as mensagens no terminal
+	// Mostra log de mensagens no terminal caso modo
+	// verbose esteja habilitado (flag: -v | --verbose)
 	logMessagesToConsole(session, message)
 
 	// Ignora mensagens do próprio bot
@@ -17,7 +18,7 @@ func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
 	}
 
 	// Comando que envia toda a lista de comandos.
-	// Não foi colocado dentro de commands map por
+	// Não foi colocado dentro do commands map por
 	// erro de Initialization Loop.
 	if strings.Index(strings.ToLower(message.Content), "!comandos") > -1 || strings.Index(strings.ToLower(message.Content), "!commands") > -1 {
 		session.ChannelMessageSend(
