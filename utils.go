@@ -16,6 +16,8 @@ func discordUTCtime() string {
 	return time.Now().Add(3 * time.Hour).UTC().Format(time.RFC3339)
 }
 
+// Espera um sinal de CTRL + C
+// para fechar o programa.
 func waitAMinute() {
 	consoleMessage("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
@@ -23,6 +25,9 @@ func waitAMinute() {
 	<-sc
 }
 
+// Exibe no terminal todas as mensagens
+// mensagens recebidas no servidor.
+// Habilitado apenas com flag --verbose
 func logMessagesToConsole(session *discordgo.Session, message *discordgo.MessageCreate) {
 	var channelOptions, _ = session.Channel(message.ChannelID)
 
@@ -41,12 +46,16 @@ func logMessagesToConsole(session *discordgo.Session, message *discordgo.Message
 // debugMode habilitado com argumento -v
 var verboseMode bool = false
 
+// Envia mensagens para o terminal caso a
+// variável `verboseMode` esteja como true.
 func consoleMessage(text string) {
 	if verboseMode {
 		fmt.Println(text)
 	}
 }
 
+// Retorna todas as keys do map
+// `commands` em uma array.
 func getCommandList() []string {
 	var commandList []string
 	for value := range commands {

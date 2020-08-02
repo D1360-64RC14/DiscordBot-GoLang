@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,44 +14,41 @@ func main() {
 		case "--help", "-h":
 			fmt.Println(" Modos de inicialização:")
 			fmt.Println("    -v  --verbose\t\tExibe todas as mensagens enviadas ao server")
-			return
+			os.Exit(0)
 
 		case "--verbose", "-v":
 			verboseMode = true
 		}
 	}
 
-	// Lê a primeira linha do arquivo 'token'.
-	// Futuramente será adicionado um arquivo
-	// de configuração mais descente.
-	var TokenAPI, TokenAPIERR = ioutil.ReadFile("./token")
-	if TokenAPIERR != nil {
-		fmt.Println("Erro ao ler arquivo 'token':")
-		fmt.Println(TokenAPIERR)
-		return
-	}
-	var token = strings.Split(string(TokenAPI), "\n")[0]
-	var app, appERR = discordgo.New("Bot " + token)
+	// Parseia o arquivo YAML numa struct
+	// e disponibiliza na variável `config`.
+	configure("./config.yml")
+
+	// Configura o Bot
+	var app, appERR = discordgo.New(fmt.Sprintf("Bot %s", config.Token.DiscordBot))
 	if appERR != nil {
 		fmt.Println("Erro ao criar a seção:")
 		fmt.Println(appERR)
-		return
+		os.Exit(1)
 	}
 
-	app.AddHandler(onMessages)
+	// Event listener de mensagens
+	app.AddHandler(onMessagesEvent)
 
 	// Inicia o Bot
 	var appOpenERR = app.Open()
 	if appOpenERR != nil {
-		fmt.Println("Erro ao abrir conexão: ")
+		fmt.Println("Erro ao abrir conexão:")
 		fmt.Println(appOpenERR)
-		return
+		os.Exit(1)
 	}
 
 	// Espera até que o usuário
 	// pressione CTRL + C.
 	waitAMinute()
 
-	// Desliga o Bot.
+	// Desliga o Bot e sai com exit code 0.
 	app.Close()
+	os.Exit(0)
 }

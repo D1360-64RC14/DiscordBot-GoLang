@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func onMessages(session *discordgo.Session, message *discordgo.MessageCreate) {
+func onMessagesEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
 	// Mostra log de mensagens no terminal caso modo
 	// verbose esteja habilitado (flag: -v | --verbose)
 	logMessagesToConsole(session, message)
