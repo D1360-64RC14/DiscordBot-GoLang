@@ -33,7 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Event listener de mensagens
+	// Event listener de mensagens.
 	app.AddHandler(onMessagesEvent)
 
 	// Inicia o Bot
