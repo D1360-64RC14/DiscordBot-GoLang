@@ -24,5 +24,5 @@ jobs:
         go-version: '1.14.6'
     - name: Compile program
       run: |
-        go get github.com/bwmarrin/discordgo
+        go get github.com/bwmarrin/discordgo gopkg.in/yaml.v2
         make build
