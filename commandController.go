@@ -30,10 +30,10 @@ func onMessagesEvent(session *discordgo.Session, message *discordgo.MessageCreat
 	// Passa pela lista de comandos verificando
 	// se existe algum na mensagem. Ao encontrar,
 	// o executa.
-	// !!! Possibilidade de Match em qualquer
-	// !!! ponto da mensagem.
+	// Match apenas com o comando
+	// estando no início da mensagem.
 	for command := range commands {
-		if strings.Index(strings.ToLower(message.Content), strings.ToLower(command)) > -1 {
+		if strings.Index(strings.ToLower(message.Content), strings.ToLower(command)) == 0 {
 			commands[command](session, message)
 			return
 		}
