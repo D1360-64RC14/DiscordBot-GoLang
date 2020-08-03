@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/D1360-64RC14/command"
+	"github.com/D1360-64RC14/config"
+	"github.com/D1360-64RC14/utils"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -17,16 +20,16 @@ func main() {
 			os.Exit(0)
 
 		case "--verbose", "-v":
-			verboseMode = true
+			utils.VerboseMode = true
 		}
 	}
 
 	// Parseia o arquivo YAML numa struct
 	// e disponibiliza na variável `config`.
-	configure("./config.yml")
+	config.Configure("./config.yml")
 
 	// Configura o Bot
-	var app, appERR = discordgo.New(fmt.Sprintf("Bot %s", config.Token.DiscordBot))
+	var app, appERR = discordgo.New(fmt.Sprintf("Bot %s", config.Data.DiscordBot.Token))
 	if appERR != nil {
 		fmt.Println("Erro ao criar a seção:")
 		fmt.Println(appERR)
@@ -34,7 +37,7 @@ func main() {
 	}
 
 	// Event listener de mensagens.
-	app.AddHandler(onMessagesEvent)
+	app.AddHandler(command.OnMessagesEvent)
 
 	// Inicia o Bot
 	var appOpenERR = app.Open()
@@ -46,7 +49,7 @@ func main() {
 
 	// Espera até que o usuário
 	// pressione CTRL + C.
-	waitAMinute()
+	utils.WaitAMinute()
 
 	// Desliga o Bot e sai com exit code 0.
 	app.Close()

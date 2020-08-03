@@ -1,2 +1,10 @@
-token:
-  discord_bot: AYAYAAA
+discord_bot:
+  token: AYAYAAA
+
+youtube_api:
+  token: EXPLOSION
+  requestURLs:
+    search_api: https://www.googleapis.com/youtube/v3/search
+    video: https://www.youtube.com/watch?v=
+    channels_api: https://www.googleapis.com/youtube/v3/channels
+    channels: https://www.youtube.com/channel

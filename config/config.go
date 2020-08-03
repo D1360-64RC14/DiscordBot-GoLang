@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -8,17 +8,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type configStruct struct {
-	Token struct {
-		DiscordBot string `yaml:"discord_bot"`
-		YoutubeAPI string `yaml:"youtube_api,omitempty"`
-	} `yaml:"token"`
-}
+// Data :
+// Variável pública que armazenará
+// a struct de configurações.
+var Data configStruct
 
-var config configStruct
-
+// Configure :
 // Exporta o arquivo `config.yml` como uma struct.
-func configure(configFilePath string) {
+func Configure(configFilePath string) {
 	// Lê o arquivo passado pelo usuário.
 	var configFile, configFileERR = ioutil.ReadFile(configFilePath)
 	if configFileERR != nil {
@@ -29,7 +26,7 @@ func configure(configFilePath string) {
 
 	// Parseia o YAML para a struct `configStruct`
 	// e retorna o valor em `config`.
-	var configYAMLERR = yaml.Unmarshal(configFile, &config)
+	var configYAMLERR = yaml.Unmarshal(configFile, &Data)
 	if configYAMLERR != nil {
 		fmt.Println("Erro ao ler arquivo de configuração:")
 		fmt.Println(configYAMLERR)

@@ -6,7 +6,7 @@ Um chatbot pro Discord feito em **GoLang**
     - [Windows](https://www.digitalocean.com/community/tutorials/how-to-install-go-and-set-up-a-local-programming-environment-on-windows-10-pt)
     - [Linux](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 0. Vá para a pasta clonada;
-0. Coloque o [token do Discrd Bot](https://discord.com/developers/applications) dentro do arquivo `token` *(no lugar de `AYAYAAA`)*;
+0. Coloque o [token do Discrd Bot](https://discord.com/developers/applications) e da [API do YouTube](https://console.developers.google.com/apis/credentials) dentro do arquivo `config.yml` *(no lugar de `AYAYAAA` e `EXPLOSION`)*;
 0. Instale a lib [discordgo](https://github.com/bwmarrin/discordgo), executando `go get github.com/bwmarrin/discordgo` no terminal;
 0. Compile o programa executando `make build`;
 0. E se alguma coisa der errado, você não é o escolhido!
@@ -25,7 +25,13 @@ Retorna um `Pong!`<br>
 
 ### !comandos OU !commands
 Retorna toda a lista de comandos.<br>
-Out: *Comandos disponíveis: `!user, !ping`*
+Out: *Comandos disponíveis: `!user, !ping, !youtubesearch`*
+
+### !youtubesearch \<pesquisa> OU \<video id>
+Mostra informações sobre o vídeo pesquisado.<br>
+Inicialmente mostra apenas 1 resultado.
+
+<img width="700px" src=".github/README/commandexample-youtubesearch.png">
 
 ---
 Outros comandos serão adicionados quando eu tiver criatividade pra tal.

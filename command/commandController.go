@@ -1,16 +1,20 @@
-package main
+package command
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/D1360-64RC14/utils"
 	"github.com/bwmarrin/discordgo"
 )
 
-func onMessagesEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
+// OnMessagesEvent :
+// Evento chamado toda vez que é
+// recebido uma mensagem.
+func OnMessagesEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
 	// Mostra log de mensagens no terminal caso modo
 	// verbose esteja habilitado (flag: -v | --verbose)
-	logMessagesToConsole(session, message)
+	utils.LogMessagesToConsole(session, message)
 
 	// Ignora mensagens do próprio bot
 	if message.Author.ID == session.State.User.ID {
@@ -32,10 +36,20 @@ func onMessagesEvent(session *discordgo.Session, message *discordgo.MessageCreat
 	// o executa.
 	// Match apenas com o comando
 	// estando no início da mensagem.
-	for command := range commands {
+	for command := range Commands {
 		if strings.Index(strings.ToLower(message.Content), strings.ToLower(command)) == 0 {
-			commands[command](session, message)
+			Commands[command](session, message)
 			return
 		}
 	}
+}
+
+// Retorna todas as keys do map
+// `commands` em uma array.
+func getCommandList() []string {
+	var commandList []string
+	for value := range Commands {
+		commandList = append(commandList, value)
+	}
+	return commandList
 }
