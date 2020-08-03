@@ -17,7 +17,7 @@ Mostra informações sobre o perfil do usuário.<br>
 Caso utilizado sem mencionar nenhum usuário, será exibido informações de seu perfil.<br>
 Out:
 
-![](.github/README/commandexample-user.gif)
+<img width="700px" src=".github/README/commandexample-user.png">
 
 ### !ping
 Retorna um `Pong!`<br>
