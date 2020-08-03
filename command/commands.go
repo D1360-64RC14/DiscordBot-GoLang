@@ -46,7 +46,6 @@ var Commands = map[string]func(session *discordgo.Session, message *discordgo.Me
 				URL: user.AvatarURL("1024"),
 			},
 		}
-		session.ChannelMessageDelete(message.ChannelID, message.ID)
 		session.ChannelMessageSendEmbed(message.ChannelID, &messageEmbed)
 	},
 
