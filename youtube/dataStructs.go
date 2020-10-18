@@ -26,6 +26,7 @@ type SearchOut struct {
 				}
 			}
 			ChannelTitle string
+			PublishTime  string
 		}
 	}
 }
@@ -59,7 +60,7 @@ type youtubeErrorOut struct {
 // error code e message formatados.
 func (i youtubeErrorOut) String() string {
 	return fmt.Sprintf("`ERROR:\nCode: %s\nMessage: %s`",
-		string(i.Code),
+		fmt.Sprint(i.Code),
 		i.Message,
 	)
 }
