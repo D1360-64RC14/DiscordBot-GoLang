@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"strings"
+	"time"
 
 	"github.com/D1360-64RC14/config"
 	"github.com/D1360-64RC14/utils"
@@ -38,7 +39,7 @@ var Commands = map[string]func(session *discordgo.Session, message *discordgo.Me
 				user.Bot,
 				user.Verified,
 			),
-			Timestamp: utils.DiscordUTCtime(),
+			Timestamp: utils.GetNowUTCTime(),
 			Footer: &discordgo.MessageEmbedFooter{
 				Text: fmt.Sprintf("Requested by %s#%s", message.Author.Username, message.Author.Discriminator),
 			},
@@ -70,6 +71,20 @@ var Commands = map[string]func(session *discordgo.Session, message *discordgo.Me
 		var youtubeSearchStruct = youtube.GetSearch(search)
 		var youtubeChannelsStruct = youtube.GetChannels(youtubeSearchStruct.Items[0].Snippet.ChannelID)
 
+		var videoUploadTime, _ = time.Parse(time.RFC3339, youtubeSearchStruct.Items[0].Snippet.PublishTime)
+		// Formato de data:
+		// DD/MM/AAAA HH:MM:SS
+		var footerString = fmt.Sprintf(
+			"Vídeo lançado em %02d/%02d/%d, ás %02d:%02d:%02d",
+			videoUploadTime.Hour(),
+			videoUploadTime.Minute(),
+			videoUploadTime.Second(),
+
+			videoUploadTime.Day(),
+			videoUploadTime.Month(),
+			videoUploadTime.Year(),
+		)
+
 		if youtubeSearchStruct.Error != nil {
 			session.ChannelMessageSend(message.ChannelID, youtubeSearchStruct.Error.String())
 		} else {
@@ -82,11 +97,14 @@ var Commands = map[string]func(session *discordgo.Session, message *discordgo.Me
 					URL: youtubeChannelsStruct.Items[0].Snippet.Thumbnails.High.URL,
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: youtubeSearchStruct.Items[0].Snippet.Thumbnails.Medium.URL,
+					URL: youtube.GetMaxResThumb(youtubeSearchStruct.Items[0].ID.VideoID),
 				},
 				Title: html.UnescapeString(youtubeSearchStruct.Items[0].Snippet.Title),
 				URL:   fmt.Sprintf("%s%s", config.Data.YoutubeAPI.RequestURLs.Video, youtubeSearchStruct.Items[0].ID.VideoID),
 				Color: int(utils.RGB2Int(255, 20, 20)),
+				Footer: &discordgo.MessageEmbedFooter{
+					Text: footerString,
+				},
 			}
 
 			session.ChannelMessageSendEmbed(message.ChannelID, messageEmbed)
