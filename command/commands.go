@@ -1,12 +1,15 @@
 package command
 
 import (
+	"bytes"
 	"fmt"
 	"html"
+	"net/url"
 	"strings"
 	"time"
 
 	"github.com/D1360-64RC14/config"
+	"github.com/D1360-64RC14/qrcode"
 	"github.com/D1360-64RC14/utils"
 	"github.com/D1360-64RC14/youtube"
 	"github.com/bwmarrin/discordgo"
@@ -109,5 +112,39 @@ var Commands = map[string]func(session *discordgo.Session, message *discordgo.Me
 
 			session.ChannelMessageSendEmbed(message.ChannelID, messageEmbed)
 		}
+	},
+
+	// Retorna um QRCode com o texto enviado.
+	// Máximo de 2,953 caracteres.
+	// Utilização:
+	//   - !qrcode <texto>
+	"!qrcode": func(session *discordgo.Session, message *discordgo.MessageCreate) {
+		var text = strings.Split(message.Content, "!qrcode ")[1]
+
+		if len(text) > 2953 {
+			session.ChannelMessageSend(
+				message.ChannelID,
+				fmt.Sprintf(
+					"%s, não é permitido textos maiores que 2.953 caracteres.",
+					message.Author.Mention(),
+				),
+			)
+			return
+		}
+
+		var filename = fmt.Sprintf(
+			"QRCODE-FROM_%s.png",
+			url.QueryEscape(
+				strings.ReplaceAll(text, " ", "_"),
+			),
+		)
+
+		session.ChannelFileSend(
+			message.ChannelID,
+			filename,
+			bytes.NewReader(
+				qrcode.GenerateQRCode(text),
+			),
+		)
 	},
 }
