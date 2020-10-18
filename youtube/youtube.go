@@ -65,6 +65,13 @@ func GetChannels(channelID string) ChannelsOut {
 	return channelsDataStruct
 }
 
+// GetMaxResThumb :
+// Retorna a thumbnail do `videoID`
+// em sua resolução máxima.
+func GetMaxResThumb(videoID string) string {
+	return fmt.Sprintf("https://i.ytimg.com/vi/%s/maxresdefault.jpg", videoID)
+}
+
 func makeRequest(requestURL string) []byte {
 	var response, responseERR = http.Get(requestURL)
 	if responseERR != nil {
