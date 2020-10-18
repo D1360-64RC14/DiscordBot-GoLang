@@ -10,10 +10,10 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// DiscordUTCtime :
+// GetNowUTCTime :
 // Retorna tempo em UTC
 // compatível com Discord.
-func DiscordUTCtime() string {
+func GetNowUTCTime() string {
 	return time.Now().Add(3 * time.Hour).UTC().Format(time.RFC3339)
 }
 
